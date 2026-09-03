@@ -73,9 +73,14 @@ FEEDBACK:
     if "FEEDBACK:" in review_text:
         feedback = review_text.split("FEEDBACK:")[1].strip()
 
+    # Increment revision count if not approved
+    new_revision_count = state.get("revision_count", 0)
+    if not approved:
+        new_revision_count += 1
+
     return {
         **state,
         "review_approved": approved,
         "review_feedback": feedback,
-        "revision_count": state.get("revision_count", 0)
+        "revision_count": new_revision_count
     }
