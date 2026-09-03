@@ -24,6 +24,9 @@ def content_writer(state: BlogState) -> BlogState:
 REVISION REQUESTED:
 {state['review_feedback']}
 
+PREVIOUS DRAFT:
+{state.get('draft_content', '')}
+
 Please address the feedback above while maintaining the quality and structure.
 """
 
@@ -78,6 +81,10 @@ CONTENT:
             content_lines.append(line)
 
     blog_content = '\n'.join(content_lines).strip()
+
+    # Check for empty output
+    if not title or not blog_content:
+        raise ValueError("Failed to parse LLM response")
 
     # Validate and truncate if needed
     if len(title) > 60:

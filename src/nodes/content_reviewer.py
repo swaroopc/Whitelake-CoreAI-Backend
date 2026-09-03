@@ -1,6 +1,7 @@
 from langchain_anthropic import ChatAnthropic
 from src.state import BlogState
 import os
+import re
 
 def content_reviewer(state: BlogState) -> BlogState:
     """
@@ -65,8 +66,9 @@ FEEDBACK:
     response = llm.invoke(prompt)
     review_text = response.content
 
-    # Parse approval
-    approved = "APPROVED: YES" in review_text.upper()
+    # Parse approval using regex
+    approval_match = re.search(r'^APPROVED:\s*(YES|NO)', review_text, re.MULTILINE | re.IGNORECASE)
+    approved = approval_match and approval_match.group(1).upper() == "YES" if approval_match else False
 
     # Extract feedback section
     feedback = review_text

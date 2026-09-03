@@ -105,7 +105,7 @@ def test_should_revise_max_revisions_reached():
         draft_meta=None,
         review_approved=False,
         review_feedback="Still needs work",
-        revision_count=2,
+        revision_count=3,
         final_title=None,
         final_content=None,
         final_meta=None,

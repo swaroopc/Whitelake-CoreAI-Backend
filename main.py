@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
+import yaml
 
 from src.graph import build_graph
 from src.state import BlogState
@@ -107,13 +108,16 @@ Example:
         filepath = output_dir / filename
 
         with open(filepath, 'w', encoding='utf-8') as f:
+            frontmatter = {
+                'title': result['final_title'],
+                'meta_description': result['final_meta'],
+                'keywords': ', '.join(result['final_keywords']),
+                'category': args.category,
+                'generated_at': datetime.now().isoformat(),
+                'revisions': result.get('revision_count', 0)
+            }
             f.write("---\n")
-            f.write(f"title: {result['final_title']}\n")
-            f.write(f"meta_description: {result['final_meta']}\n")
-            f.write(f"keywords: {', '.join(result['final_keywords'])}\n")
-            f.write(f"category: {args.category}\n")
-            f.write(f"generated_at: {datetime.now().isoformat()}\n")
-            f.write(f"revisions: {result.get('revision_count', 0)}\n")
+            f.write(yaml.safe_dump(frontmatter, default_flow_style=False, allow_unicode=True))
             f.write("---\n\n")
             f.write(result['final_content'])
 

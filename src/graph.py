@@ -15,7 +15,7 @@ def should_revise(state: BlogState) -> str:
         "revise" if not approved and under max revisions
         "finalize" if max revisions reached (accept as-is)
     """
-    MAX_REVISIONS = 2
+    MAX_REVISIONS = 3
 
     if state["review_approved"]:
         return "finalize"
