@@ -50,30 +50,40 @@ REVIEW CRITERIA:
 7. Accuracy: Technically sound electrical information
 8. Completeness: All outline sections covered
 
-FORMAT YOUR RESPONSE AS:
+Return ONLY valid JSON in this exact format (no markdown code blocks, no other text):
 
-APPROVED: [YES or NO]
-
-QUALITY SCORE: [X/10]
-
-REVIEW:
-[Detailed review with ✓ for good points, ✗ for issues]
-
-FEEDBACK:
-[If APPROVED: NO, provide specific revision requests]
-[If APPROVED: YES, can be brief positive note]"""
+{{
+  "approved": true or false,
+  "quality_score": 8,
+  "review": "Detailed review with ✓ for good points, ✗ for issues",
+  "feedback": "If approved: false, provide specific revision requests. If approved: true, brief positive note"
+}}"""
 
     response = llm.invoke(prompt)
-    review_text = response.content
+    response_text = response.content.strip()
 
-    # Parse approval using regex
-    approval_match = re.search(r'^APPROVED:\s*(YES|NO)', review_text, re.MULTILINE | re.IGNORECASE)
-    approved = approval_match and approval_match.group(1).upper() == "YES" if approval_match else False
+    # Parse JSON response
+    import json
+    try:
+        # Try direct JSON parse
+        result = json.loads(response_text)
+    except json.JSONDecodeError:
+        # Try extracting from markdown code blocks
+        if "```json" in response_text:
+            start = response_text.find("```json") + 7
+            end = response_text.find("```", start)
+            response_text = response_text[start:end].strip()
+            result = json.loads(response_text)
+        elif "```" in response_text:
+            start = response_text.find("```") + 3
+            end = response_text.find("```", start)
+            response_text = response_text[start:end].strip()
+            result = json.loads(response_text)
+        else:
+            raise ValueError(f"Failed to parse reviewer response as JSON: {response_text[:500]}")
 
-    # Extract feedback section
-    feedback = review_text
-    if "FEEDBACK:" in review_text:
-        feedback = review_text.split("FEEDBACK:")[1].strip()
+    approved = result.get("approved", False)
+    feedback = result.get("feedback", "")
 
     # Increment revision count if not approved
     new_revision_count = state.get("revision_count", 0)
