@@ -1,169 +1,227 @@
-# LangGraph Blog Generator
+# LangGraph Blog Generator API
 
-Multi-node AI workflow for generating SEO-optimized electrical blog posts using LangGraph and Groq (Llama 3.1 405B).
+AI-powered blog generation REST API using LangGraph, LangChain, and Groq.
+
+## Quick Start
+
+```bash
+# Install
+pip install -r requirements.txt
+
+# Configure
+echo "GROQ_API_KEY=your_key_here" > .env
+
+# Run
+uvicorn api:app --host 0.0.0.0 --port 8077
+```
+
+Server: `http://localhost:8077`  
+Docs: `http://localhost:8077/docs`
+
+## API
+
+### Generate Blog
+
+```bash
+POST /api/generate-blog
+Content-Type: application/json
+
+{
+  "topic": "How to Test Electrical Outlets",
+  "category": "troubleshooting",
+  "keywords": ["outlet", "testing", "safety"],
+  "target_audience": "homeowners"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "title": "SEO-Optimized Title",
+  "content": "# Full markdown content (1200-1800 words)",
+  "meta_description": "SEO description",
+  "category": "troubleshooting",
+  "keywords": ["outlet", "testing", "safety"],
+  "outline": "## Outline",
+  "word_count": 1485,
+  "revisions": 0,
+  "review_status": "APPROVED",
+  "review_feedback": "Reviewer notes",
+  "generated_at": "2026-09-04T11:02:28.265207",
+  "target_audience": "homeowners"
+}
+```
+
+### Health Check
+
+```bash
+GET /health
+
+Response: {"status": "healthy", ...}
+```
+
+## Frontend Integration
+
+**The `content` field is markdown.** Parse it in your frontend:
+
+### React Example
+
+```jsx
+import ReactMarkdown from 'react-markdown';
+
+function BlogDisplay({ blog }) {
+  return (
+    <div>
+      <h1>{blog.title}</h1>
+      <p>{blog.meta_description}</p>
+      <ReactMarkdown>{blog.content}</ReactMarkdown>
+    </div>
+  );
+}
+```
+
+```bash
+npm install react-markdown
+```
+
+### Vanilla JS Example
+
+```javascript
+import { marked } from 'marked';
+
+const html = marked(blog.content);
+document.getElementById('blog').innerHTML = html;
+```
+
+```bash
+npm install marked
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `success` | boolean | Generation succeeded |
+| `title` | string | SEO title (≤60 chars) |
+| `content` | **string (markdown)** | Full blog content |
+| `meta_description` | string | SEO meta (≤160 chars) |
+| `category` | string | Category |
+| `keywords` | array | Keywords |
+| `outline` | string | Outline used |
+| `word_count` | integer | Total words |
+| `revisions` | integer | Revisions made (0-3) |
+| `review_status` | string | APPROVED / ACCEPTED |
+| `review_feedback` | string | Reviewer notes |
+| `generated_at` | string | ISO timestamp |
+| `target_audience` | string | Audience |
 
 ## Architecture
 
 ```
 ┌─────────────────┐
-│  Outline Node   │ - Creates structured outline
+│  Outline Node   │ Creates structure
 └────────┬────────┘
          ↓
 ┌─────────────────┐
-│  Writer Node    │ - Generates 1200-1800 word content
+│  Writer Node    │ Generates content (JSON format)
 └────────┬────────┘
          ↓
 ┌─────────────────┐
-│  Reviewer Node  │ - Checks quality & SEO
+│  Reviewer Node  │ Quality check (JSON format)
 └────────┬────────┘
          ↓
     [Approved?]
-    Yes ↓   No → (revise, max 2x)
+    Yes ↓   No → (revise, max 3x)
          ↓
 ┌─────────────────┐
-│ Finalizer Node  │ - Packages output
+│ Finalizer Node  │ Package output
 └─────────────────┘
 ```
 
-## Features
+## Configuration
 
-- **Multi-node workflow** - Outline → Write → Review → Finalize
-- **Quality control** - Automated reviewer with 8 criteria
-- **Iterative revision** - Up to 2 automatic revisions based on feedback
-- **SEO optimized** - Title, meta, keywords validated
-- **LangGraph orchestration** - Conditional edges and state management
-
-## Installation
+### Environment Variables
 
 ```bash
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env: GROQ_API_KEY=your-groq-api-key
+GROQ_API_KEY=your_groq_api_key  # Required
 ```
 
-## Usage
+### CORS (Production)
 
-```bash
-python main.py "Topic Title" \
-  --category CATEGORY \
-  --keywords "keyword1,keyword2,keyword3"
+Update `api.py`:
+
+```python
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://yourdomain.com"],  # Your domain
+    allow_methods=["POST", "GET"],
+    allow_headers=["Content-Type"],
+)
 ```
 
-**Example:**
+## Security Notes
 
-```bash
-python main.py "Why Does My Circuit Breaker Keep Tripping?" \
-  --category troubleshooting \
-  --keywords "circuit breaker,tripping,electrical overload"
-```
+⚠️ **Development setup** - For production:
 
-**Output:**
+1. **CORS**: Set specific origins (not `["*"]`)
+2. **Authentication**: Add API keys/JWT
+3. **Rate Limiting**: Prevent abuse
+4. **HTTPS**: Use SSL certificates
+5. **Error Messages**: Don't expose internals
 
-```
-🤖 LangGraph Blog Generator
-======================================================================
+See `SECURITY.md` for details.
 
-📝 Topic: Why Does My Circuit Breaker Keep Tripping?
-   Category: troubleshooting
-   Keywords: circuit breaker, tripping, electrical overload
-   Audience: homeowners
+## Performance
 
-🔄 Starting multi-node workflow...
-
-   [1/4] 📋 Generating outline...
-   [2/4] ✍️  Writing content...
-   [3/4] 🔍 Reviewing quality...
-   [4/4] ✅ Finalizing...
-
-======================================================================
-
-✅ Blog post generated successfully!
-
-📊 Workflow Stats:
-   Revisions: 0
-   Review: APPROVED
-
-📄 Final Output:
-   Title: Why Does My Circuit Breaker Keep Tripping? 7 Common Causes
-   Meta: Learn the 7 most common reasons your circuit breaker trips.
-   Keywords: circuit breaker, tripping, electrical overload
-   Length: 1523 words
-
-💾 Saved to: output/why-does-my-circuit-breaker-keep-tripping.md
-
-📝 Review Feedback:
-   ✓ SEO optimized title and meta ✓ Keywords naturally integrated...
-
-======================================================================
-✅ Complete!
-```
-
-## Review Criteria
-
-The reviewer node checks:
-
-1. **SEO** - Title < 60 chars, meta < 160 chars, keyword integration
-2. **Length** - 1200-1800 words
-3. **Structure** - Clear headers, numbered lists
-4. **Safety** - Warnings where appropriate
-5. **Audience** - Accessible language
-6. **Call-to-Action** - Clear service invitation
-7. **Accuracy** - Technically sound
-8. **Completeness** - All sections covered
-
-## Workflow Details
-
-### Node 1: Outline Generator
-- Creates structured outline
-- 5-7 main sections
-- Safety and CTA sections
-
-### Node 2: Content Writer
-- Generates 1200-1800 words
-- Follows outline structure
-- Incorporates keywords naturally
-- Can revise based on feedback
-
-### Node 3: Content Reviewer
-- Reviews against 8 criteria
-- Returns APPROVED: YES/NO
-- Provides specific feedback
-- Scores quality 0-10
-
-### Node 4: Finalizer
-- Packages approved content
-- Adds final metadata
-- Prepares for publication
+- **Generation**: 30-60 seconds
+- **Word Count**: 1200-1800 words
+- **Max Revisions**: 3
+- **Rate Limit**: 8000 tokens/min (Groq free tier)
 
 ## Testing
 
 ```bash
-pytest tests/ -v
+# Health
+curl http://localhost:8077/health
+
+# Generate
+curl -X POST http://localhost:8077/api/generate-blog \
+  -H "Content-Type: application/json" \
+  -d '{"topic":"Test","keywords":["test"]}'
 ```
 
 ## Project Structure
 
 ```
 .
+├── api.py              # FastAPI application
 ├── src/
-│   ├── state.py                    # BlogState TypedDict
-│   ├── graph.py                    # LangGraph workflow
-│   └── nodes/
-│       ├── outline_generator.py
-│       ├── content_writer.py
-│       ├── content_reviewer.py
-│       └── finalizer.py
-├── tests/
-├── output/                         # Generated blogs
-├── main.py                         # CLI
-└── README.md
+│   ├── state.py        # BlogState TypedDict
+│   ├── graph.py        # LangGraph workflow
+│   └── nodes/          # Individual nodes
+├── tests/              # Test suite
+├── .env                # API keys (gitignored)
+└── README.md           # This file
 ```
 
 ## Dependencies
 
 - **LangGraph** - Workflow orchestration
-- **LangChain** - LLM integration
-- **Groq API** - Content generation (Llama 3.1 405B Reasoning)
+- **LangChain** - LLM integration  
+- **Groq** - Content generation
+- **FastAPI** - REST API
+- **Pydantic** - Validation
+
+## CLI (Legacy)
+
+Original CLI still works:
+
+```bash
+python main.py "Topic" --category troubleshooting --keywords "key1,key2"
+```
+
+Saves markdown file to `output/` directory.
 
 ## License
 
