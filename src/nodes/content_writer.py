@@ -48,43 +48,45 @@ REQUIREMENTS:
 - Professional but friendly tone
 - Strong call-to-action at end
 
-FORMAT YOUR RESPONSE EXACTLY AS:
+Return ONLY valid JSON in this exact format (no markdown code blocks, no other text):
 
-TITLE: [SEO-optimized title under 60 characters]
-
-META: [Meta description under 160 characters]
-
-CONTENT:
-[Full markdown blog post starting with # title]"""
+{{
+  "title": "SEO-optimized title under 60 characters",
+  "content": "Full markdown blog post",
+  "meta_description": "Compelling description under 160 characters",
+  "keywords": ["keyword1", "keyword2", "keyword3"]
+}}"""
 
     response = llm.invoke(prompt)
-    content = response.content
+    response_text = response.content.strip()
 
-    # Parse response
-    lines = content.split('\n')
+    # Parse JSON response
+    import json
+    try:
+        # Try direct JSON parse
+        result = json.loads(response_text)
+    except json.JSONDecodeError:
+        # Try extracting from markdown code blocks
+        if "```json" in response_text:
+            start = response_text.find("```json") + 7
+            end = response_text.find("```", start)
+            response_text = response_text[start:end].strip()
+            result = json.loads(response_text)
+        elif "```" in response_text:
+            start = response_text.find("```") + 3
+            end = response_text.find("```", start)
+            response_text = response_text[start:end].strip()
+            result = json.loads(response_text)
+        else:
+            raise ValueError(f"Failed to parse LLM response as JSON: {response_text[:500]}")
 
-    title = ""
-    meta = ""
-    content_lines = []
-
-    section = None
-    for line in lines:
-        if line.startswith("TITLE:"):
-            title = line.replace("TITLE:", "").strip()
-            section = "title"
-        elif line.startswith("META:"):
-            meta = line.replace("META:", "").strip()
-            section = "meta"
-        elif line.startswith("CONTENT:"):
-            section = "content"
-        elif section == "content":
-            content_lines.append(line)
-
-    blog_content = '\n'.join(content_lines).strip()
+    title = result.get("title", "")
+    blog_content = result.get("content", "")
+    meta = result.get("meta_description", "")
 
     # Check for empty output
     if not title or not blog_content:
-        raise ValueError("Failed to parse LLM response")
+        raise ValueError(f"Empty title or content in response")
 
     # Validate and truncate if needed
     if len(title) > 60:
