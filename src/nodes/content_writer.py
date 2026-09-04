@@ -60,13 +60,6 @@ Return ONLY valid JSON in this exact format (no markdown code blocks, no other t
     response = llm.invoke(prompt)
     response_text = response.content.strip() if hasattr(response.content, 'strip') else str(response.content).strip()
 
-    # Debug: Print response info
-    print(f"\n=== DEBUG content_writer ===")
-    print(f"Response type: {type(response.content)}")
-    print(f"Response length: {len(response_text)}")
-    print(f"First 500 chars: {response_text[:500]}")
-    print("===\n")
-
     if not response_text:
         raise ValueError("Empty response from LLM")
 

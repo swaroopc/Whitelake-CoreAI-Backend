@@ -10,20 +10,12 @@ def mock_llm():
         mock.return_value = llm
 
         response = Mock()
-        response.content = """APPROVED: YES
-
-QUALITY SCORE: 9/10
-
-REVIEW:
-✓ SEO optimized title and meta
-✓ All keywords naturally integrated
-✓ Clear structure with proper headers
-✓ 1450 words (within target range)
-✓ Safety warnings included
-✓ Strong call-to-action
-✓ Accessible language for homeowners
-
-Minor note: Excellent quality, ready to publish."""
+        response.content = '''{
+  "approved": true,
+  "quality_score": 9,
+  "review": "✓ SEO optimized title and meta\\n✓ All keywords naturally integrated\\n✓ Clear structure with proper headers\\n✓ 1450 words (within target range)\\n✓ Safety warnings included\\n✓ Strong call-to-action\\n✓ Accessible language for homeowners",
+  "feedback": "Minor note: Excellent quality, ready to publish."
+}'''
 
         llm.invoke.return_value = response
         yield llm

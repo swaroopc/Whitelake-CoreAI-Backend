@@ -11,29 +11,12 @@ def mock_llm():
         mock.return_value = llm
 
         response = Mock()
-        response.content = """TITLE: Why Does My Circuit Breaker Keep Tripping? 7 Common Causes
-
-META: Learn the 7 most common reasons your circuit breaker keeps tripping and when to call a professional electrician.
-
-CONTENT:
-# Why Does My Circuit Breaker Keep Tripping?
-
-A tripping circuit breaker is one of the most common electrical issues homeowners face...
-
-## Common Causes
-
-1. **Overloaded Circuit** - Too many devices...
-2. **Short Circuit** - Wiring fault...
-
-[... 1500 words of content ...]
-
-## When to Call a Professional
-
-If your breaker trips repeatedly...
-
-## Conclusion
-
-Don't ignore a tripping breaker. Contact our licensed electricians today."""
+        response.content = '''{
+  "title": "Why Does My Circuit Breaker Keep Tripping? 7 Common Causes",
+  "meta_description": "Learn the 7 most common reasons your circuit breaker keeps tripping and when to call a professional electrician.",
+  "content": "# Why Does My Circuit Breaker Keep Tripping?\\n\\nA tripping circuit breaker is one of the most common electrical issues homeowners face...\\n\\n## Common Causes\\n\\n1. **Overloaded Circuit** - Too many devices...\\n2. **Short Circuit** - Wiring fault...\\n\\n[... 1500 words of content ...]\\n\\n## When to Call a Professional\\n\\nIf your breaker trips repeatedly...\\n\\n## Conclusion\\n\\nDon't ignore a tripping breaker. Contact our licensed electricians today.",
+  "keywords": ["circuit breaker", "tripping", "electrical safety"]
+}'''
 
         llm.invoke.return_value = response
         yield llm
@@ -107,12 +90,12 @@ def test_content_writer_truncates_long_title():
         mock.return_value = llm
 
         response = Mock()
-        response.content = """TITLE: This Is An Extremely Long Title That Definitely Exceeds The Sixty Character Limit For SEO
-
-META: Short meta
-
-CONTENT:
-# Content here"""
+        response.content = '''{
+  "title": "This Is An Extremely Long Title That Definitely Exceeds The Sixty Character Limit For SEO",
+  "meta_description": "Short meta",
+  "content": "# Content here",
+  "keywords": ["test"]
+}'''
 
         llm.invoke.return_value = response
 
@@ -147,12 +130,12 @@ def test_content_writer_truncates_long_meta():
         mock.return_value = llm
 
         response = Mock()
-        response.content = """TITLE: Short Title
-
-META: This is an extremely long meta description that goes on and on and definitely exceeds the one hundred sixty character limit for SEO meta descriptions which should be concise.
-
-CONTENT:
-# Content here"""
+        response.content = '''{
+  "title": "Short Title",
+  "meta_description": "This is an extremely long meta description that goes on and on and definitely exceeds the one hundred sixty character limit for SEO meta descriptions which should be concise.",
+  "content": "# Content here",
+  "keywords": ["test"]
+}'''
 
         llm.invoke.return_value = response
 

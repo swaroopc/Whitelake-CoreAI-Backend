@@ -22,25 +22,24 @@ def mock_all_llms():
         llm2 = Mock()
         mock2.return_value = llm2
         resp2 = Mock()
-        resp2.content = """TITLE: Test Title
-
-META: Test meta description
-
-CONTENT:
-# Test Title
-
-Content here """ + "word " * 1500
+        resp2.content = '''{
+  "title": "Test Title",
+  "meta_description": "Test meta description",
+  "content": "# Test Title\\n\\nContent here ''' + "word " * 1500 + '''",
+  "keywords": ["test"]
+}'''
         llm2.invoke.return_value = resp2
 
         # Mock reviewer (approve on first try)
         llm3 = Mock()
         mock3.return_value = llm3
         resp3 = Mock()
-        resp3.content = """APPROVED: YES
-
-QUALITY SCORE: 9/10
-
-REVIEW: All good"""
+        resp3.content = '''{
+  "approved": true,
+  "quality_score": 9,
+  "review": "All good",
+  "feedback": "All good"
+}'''
         llm3.invoke.return_value = resp3
 
         yield (llm1, llm2, llm3)
@@ -169,14 +168,12 @@ def test_graph_with_revision_loop():
         llm2 = Mock()
         mock2.return_value = llm2
         resp2 = Mock()
-        resp2.content = """TITLE: Test Title
-
-META: Test meta description
-
-CONTENT:
-# Test Title
-
-Content here """ + "word " * 1500
+        resp2.content = '''{
+  "title": "Test Title",
+  "meta_description": "Test meta description",
+  "content": "# Test Title\\n\\nContent here ''' + "word " * 1500 + '''",
+  "keywords": ["test"]
+}'''
         llm2.invoke.return_value = resp2
 
         # Mock reviewer: first reject, then approve
@@ -184,18 +181,20 @@ Content here """ + "word " * 1500
         mock3.return_value = llm3
 
         reject_resp = Mock()
-        reject_resp.content = """APPROVED: NO
-
-QUALITY SCORE: 5/10
-
-REVIEW: Needs improvement"""
+        reject_resp.content = '''{
+  "approved": false,
+  "quality_score": 5,
+  "review": "Needs improvement",
+  "feedback": "Add more safety warnings"
+}'''
 
         approve_resp = Mock()
-        approve_resp.content = """APPROVED: YES
-
-QUALITY SCORE: 9/10
-
-REVIEW: Much better!"""
+        approve_resp.content = '''{
+  "approved": true,
+  "quality_score": 9,
+  "review": "Much better!",
+  "feedback": "All good now"
+}'''
 
         llm3.invoke.side_effect = [reject_resp, approve_resp]
 
