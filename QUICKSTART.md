@@ -69,7 +69,7 @@ GET http://localhost:8077/health
 ### 2. Generate Blog
 
 ```bash
-POST http://localhost:8000/api/generate-blog
+POST http://localhost:8077/api/generate-blog
 Content-Type: application/json
 ```
 
@@ -114,7 +114,7 @@ python test_api.py
 
 ```bash
 # Health check
-curl http://localhost:8000/health
+curl http://localhost:8077/health
 
 # Generate blog
 curl -X POST http://localhost:8077/api/generate-blog \
@@ -280,7 +280,7 @@ uvicorn api:app --port 8078
 cat .env
 
 # Verify server is running
-curl http://localhost:8000/health
+curl http://localhost:8077/health
 ```
 
 ## 🎉 **Success!**

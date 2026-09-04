@@ -28,7 +28,7 @@ uvicorn api:app --reload --host 0.0.0.0 --port 8000
 uvicorn api:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
-API will be available at: `http://localhost:8000`
+API will be available at: `http://localhost:8077`
 
 ## 📡 API Endpoints
 
@@ -94,10 +94,10 @@ python test_api.py
 
 ```bash
 # Health check
-curl http://localhost:8000/health
+curl http://localhost:8077/health
 
 # Generate blog
-curl -X POST http://localhost:8000/api/generate-blog \
+curl -X POST http://localhost:8077/api/generate-blog \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "Why Circuit Breakers Trip",
@@ -112,7 +112,7 @@ curl -X POST http://localhost:8000/api/generate-blog \
 ```javascript
 // Example fetch call
 const generateBlog = async (topic, keywords) => {
-  const response = await fetch('http://localhost:8000/api/generate-blog', {
+  const response = await fetch('http://localhost:8077/api/generate-blog', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -164,8 +164,8 @@ generateBlog(
 
 Interactive API docs available at:
 
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
+- **Swagger UI**: `http://localhost:8077/docs`
+- **ReDoc**: `http://localhost:8077/redoc`
 
 ## 🔒 Production Considerations
 
