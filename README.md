@@ -1,6 +1,6 @@
 # LangGraph Blog Generator
 
-Multi-node AI workflow for generating SEO-optimized electrical blog posts using LangGraph and Claude.
+Multi-node AI workflow for generating SEO-optimized electrical blog posts using LangGraph and Groq (Llama 3.1 405B).
 
 ## Architecture
 
@@ -38,7 +38,7 @@ Multi-node AI workflow for generating SEO-optimized electrical blog posts using 
 ```bash
 pip install -r requirements.txt
 cp .env.example .env
-# Edit .env: ANTHROPIC_API_KEY=your-key
+# Edit .env: GROQ_API_KEY=your-groq-api-key
 ```
 
 ## Usage
@@ -163,7 +163,7 @@ pytest tests/ -v
 
 - **LangGraph** - Workflow orchestration
 - **LangChain** - LLM integration
-- **Claude API** - Content generation
+- **Groq API** - Content generation (Llama 3.1 405B Reasoning)
 
 ## License
 

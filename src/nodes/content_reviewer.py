@@ -1,4 +1,4 @@
-from langchain_anthropic import ChatAnthropic
+from langchain_groq import ChatGroq
 from src.state import BlogState
 import os
 import re
@@ -17,9 +17,9 @@ def content_reviewer(state: BlogState) -> BlogState:
     - Call-to-action
     """
 
-    llm = ChatAnthropic(
-        model="claude-sonnet-4-5-20250929",
-        api_key=os.getenv("ANTHROPIC_API_KEY"),
+    llm = ChatGroq(
+        model="llama-3.1-405b-reasoning",
+        api_key=os.getenv("GROQ_API_KEY"),
         temperature=0.3  # Lower temp for consistent reviews
     )
 

@@ -7,9 +7,9 @@ from src.state import BlogState
 @pytest.fixture
 def mock_all_llms():
     """Mock all LangChain LLM calls"""
-    with patch('src.nodes.outline_generator.ChatAnthropic') as mock1, \
-         patch('src.nodes.content_writer.ChatAnthropic') as mock2, \
-         patch('src.nodes.content_reviewer.ChatAnthropic') as mock3:
+    with patch('src.nodes.outline_generator.ChatGroq') as mock1, \
+         patch('src.nodes.content_writer.ChatGroq') as mock2, \
+         patch('src.nodes.content_reviewer.ChatGroq') as mock3:
 
         # Mock outline generator
         llm1 = Mock()
@@ -154,9 +154,9 @@ def test_graph_runs_end_to_end(mock_all_llms):
 def test_graph_with_revision_loop():
     """Test graph executes revision loop when content rejected"""
 
-    with patch('src.nodes.outline_generator.ChatAnthropic') as mock1, \
-         patch('src.nodes.content_writer.ChatAnthropic') as mock2, \
-         patch('src.nodes.content_reviewer.ChatAnthropic') as mock3:
+    with patch('src.nodes.outline_generator.ChatGroq') as mock1, \
+         patch('src.nodes.content_writer.ChatGroq') as mock2, \
+         patch('src.nodes.content_reviewer.ChatGroq') as mock3:
 
         # Mock outline generator
         llm1 = Mock()

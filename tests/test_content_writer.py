@@ -6,7 +6,7 @@ from src.state import BlogState
 
 @pytest.fixture
 def mock_llm():
-    with patch('src.nodes.content_writer.ChatAnthropic') as mock:
+    with patch('src.nodes.content_writer.ChatGroq') as mock:
         llm = Mock()
         mock.return_value = llm
 
@@ -102,7 +102,7 @@ def test_content_writer_handles_revision(mock_llm):
 
 def test_content_writer_truncates_long_title():
     """Test that title >60 chars gets truncated"""
-    with patch('src.nodes.content_writer.ChatAnthropic') as mock:
+    with patch('src.nodes.content_writer.ChatGroq') as mock:
         llm = Mock()
         mock.return_value = llm
 
@@ -142,7 +142,7 @@ CONTENT:
 
 def test_content_writer_truncates_long_meta():
     """Test that meta >160 chars gets truncated"""
-    with patch('src.nodes.content_writer.ChatAnthropic') as mock:
+    with patch('src.nodes.content_writer.ChatGroq') as mock:
         llm = Mock()
         mock.return_value = llm
 

@@ -5,7 +5,7 @@ from src.state import BlogState
 
 @pytest.fixture
 def mock_llm():
-    with patch('src.nodes.outline_generator.ChatAnthropic') as mock:
+    with patch('src.nodes.outline_generator.ChatGroq') as mock:
         llm = Mock()
         mock.return_value = llm
 
