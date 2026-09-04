@@ -11,7 +11,7 @@ def outline_generator(state: BlogState) -> BlogState:
 
     # Initialize LLM
     llm = ChatGroq(
-        model="openai/gpt-oss-120b",
+        model="openai/gpt-oss-120b",  # Faster model with better rate limits
         api_key=os.getenv("GROQ_API_KEY"),
         temperature=0.7
     )
