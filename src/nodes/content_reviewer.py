@@ -18,7 +18,7 @@ def content_reviewer(state: BlogState) -> BlogState:
     """
 
     llm = ChatGroq(
-        model="llama-3.1-405b-reasoning",
+        model="openai/gpt-oss-120b",
         api_key=os.getenv("GROQ_API_KEY"),
         temperature=0.3  # Lower temp for consistent reviews
     )
