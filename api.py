@@ -28,12 +28,15 @@ app = FastAPI(
 )
 
 # CORS middleware for frontend integration
+# SECURITY: Configure allowed origins for production
+# Development: allow_origins=["http://localhost:3000", "http://localhost:5173"]
+# Production: allow_origins=["https://yourdomain.com"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure for production
+    allow_origins=["*"],  # ⚠️ CHANGE FOR PRODUCTION - allow specific origins only
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["POST", "GET"],  # Limit to needed methods
+    allow_headers=["Content-Type"],
 )
 
 
@@ -196,6 +199,6 @@ if __name__ == "__main__":
     uvicorn.run(
         "api:app",
         host="0.0.0.0",
-        port=8000,
+        port=8077,  # Updated port
         reload=True
     )

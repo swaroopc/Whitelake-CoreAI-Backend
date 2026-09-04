@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 
 # API endpoint
-BASE_URL = "http://localhost:8001"
+BASE_URL = "http://localhost:8077"
 
 def test_health_check():
     """Test health check endpoint"""

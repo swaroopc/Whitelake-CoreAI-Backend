@@ -38,7 +38,7 @@ echo "GROQ_API_KEY=your_groq_api_key_here" > .env
 
 ```bash
 # Method 1: Direct run (development)
-uvicorn api:app --reload --host 0.0.0.0 --port 8000
+uvicorn api:app --reload --host 0.0.0.0 --port 8077
 
 # Method 2: Python script
 python api.py
@@ -47,14 +47,14 @@ python api.py
 uvicorn api:app --port 8001
 ```
 
-**Server runs at:** `http://localhost:8000`
+**Server runs at:** `http://localhost:8077`
 
 ## 📡 **API Endpoints**
 
 ### 1. Health Check
 
 ```bash
-GET http://localhost:8000/health
+GET http://localhost:8077/health
 ```
 
 **Response:**
@@ -117,7 +117,7 @@ python test_api.py
 curl http://localhost:8000/health
 
 # Generate blog
-curl -X POST http://localhost:8000/api/generate-blog \
+curl -X POST http://localhost:8077/api/generate-blog \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "Why Circuit Breakers Trip",
@@ -130,7 +130,7 @@ curl -X POST http://localhost:8000/api/generate-blog \
 ### Using JavaScript/Frontend
 
 ```javascript
-const response = await fetch('http://localhost:8000/api/generate-blog', {
+const response = await fetch('http://localhost:8077/api/generate-blog', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -179,7 +179,7 @@ function BlogGenerator() {
   const generateBlog = async (topic, keywords) => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/generate-blog', {
+      const res = await fetch('http://localhost:8077/api/generate-blog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -218,8 +218,8 @@ function BlogGenerator() {
 
 Open in browser:
 
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
+- **Swagger UI**: `http://localhost:8077/docs`
+- **ReDoc**: `http://localhost:8077/redoc`
 
 Try the API directly from the browser!
 
@@ -262,10 +262,10 @@ kill <PID>
 **Port already in use:**
 ```bash
 # Kill process on port 8000
-lsof -ti:8000 | xargs kill -9
+lsof -ti:8077 | xargs kill -9
 
 # Or use different port
-uvicorn api:app --port 8001
+uvicorn api:app --port 8078
 ```
 
 **Rate limit errors:**
